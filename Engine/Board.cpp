@@ -1,4 +1,7 @@
 #include "Board.h"
+#include "Snake.h"
+#include "Goal.h"
+
 #include <assert.h>
 
 Board::Board(Graphics& gfx)
@@ -34,11 +37,45 @@ void Board::DrawBorder(Color color)
 	}
 }
 
+void Board::DrawObstacles(Color color)
+{
+	for (size_t i = 0; i < _width * _height; i++)
+	{
+		if (_hasObsticle[i] == true)
+		{
+			int x = i % _width;
+			int y = i / _width;
+			Location obstacleLoc(x,y);
+			drawCell(obstacleLoc, color);
+		}
+	}
+}
+
+void Board::spawnObstacle(std::mt19937& rng, const Snake& snake, const Goal& goal)
+{
+	std::uniform_int_distribution<int> xDist(0, _width - 1);
+	std::uniform_int_distribution<int> yDist(0, _height - 1);
+
+	Location newLoc;
+	do
+	{
+		newLoc._x = xDist(rng);
+		newLoc._y = yDist(rng);
+	} while (snake.IsInTile(newLoc) || checkForObstacle(newLoc) || newLoc == goal.getLocation());
+
+	_hasObsticle[newLoc._y * _width + newLoc._x] = true;
+}
+
 bool Board::isInsideBoard(const Location& loc) const
 {
 	
 	bool inBoard =  loc._x >= 0 && loc._x < _width && loc._y >= 0 && loc._y < _height;
 	return inBoard;
+}
+
+bool Board::checkForObstacle(const Location& loc) const
+{
+	return _hasObsticle[loc._y * _width + loc._x];
 }
 
 void Board::CenterBoard()

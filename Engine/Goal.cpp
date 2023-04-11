@@ -19,7 +19,7 @@ void Goal::Respawn(std::mt19937& rng, const Board& board, const Snake& snake)
 	{
 		newLoc._x = xDist(rng);
 		newLoc._y = yDist(rng);
-	} while (snake.IsInTile(newLoc));
+	} while (snake.IsInTile(newLoc) || board.checkForObstacle(newLoc));
 
 	_loc = newLoc;
 

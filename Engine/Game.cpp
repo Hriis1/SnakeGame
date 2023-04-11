@@ -62,7 +62,7 @@ void Game::UpdateModel()
 		{
 			_snekMoveCounter = 0;
 			Location next = _snek.GetNextHeadPos(_delta_loc);
-			if (_board.isInsideBoard(next) && !_snek.IsInTileExeptEnd(next))
+			if (_board.isInsideBoard(next) && !_snek.IsInTileExeptEnd(next) && !_board.checkForObstacle(next))
 			{
 				bool eating = next == _goal.getLocation();
 				if (eating)
@@ -73,6 +73,7 @@ void Game::UpdateModel()
 				if (eating)
 				{
 					_goal.Respawn(_rng, _board, _snek);
+					_board.spawnObstacle(_rng, _snek, _goal);
 				}
 			}
 			else
@@ -88,6 +89,7 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	_board.DrawBorder(Color(87, 9, 70));
+	_board.DrawObstacles(Colors::Gray);
 	_snek.Draw(_board);
 	_goal.Draw(_board);
 
