@@ -20,7 +20,7 @@ void Goal::Respawn(std::mt19937& rng, Board& board, const Snake& snake)
 	{
 		newLoc._x = xDist(rng);
 		newLoc._y = yDist(rng);
-	} while (snake.IsInTile(newLoc) || board.checkForObstacle(newLoc));
+	} while (snake.IsInTile(newLoc) || board.checkForContent(newLoc, CellContents::Obsticle) || board.checkForContent(newLoc, CellContents::Poison));
 
 	_loc = newLoc;
 	board._contents[_loc._y * board._width + _loc._x] = CellContents::Goal;

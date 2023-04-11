@@ -13,16 +13,16 @@ class Board
 {
 	friend class Goal;
 public:
-	Board(Graphics& gfx);
+	Board(Graphics& gfx, std::mt19937& rng);
 
 	void drawCell(const Location& loc, Color col);
 	void DrawBorder(Color color);
-	void DrawContents(Color goalColor, Color obsticleColor);
+	void DrawContents(Color goalColor, Color obsticleColor, Color poisonColor);
 
 	void spawnObstacle(std::mt19937& rng, const class Snake& snake, const class Goal& goal);
 
 	bool isInsideBoard(const Location& loc) const;
-	bool checkForObstacle(const Location& loc) const;
+	bool checkForContent(const Location& loc, CellContents content) const;
 
 	//getters
 	int getWidth() const { return _width; }
@@ -32,6 +32,7 @@ public:
 
 private:
 	void CenterBoard();
+	void spawnPoison(std::mt19937& rng);
 private:
 	static constexpr int _dimention = 20;
 	static constexpr int _width = 25;

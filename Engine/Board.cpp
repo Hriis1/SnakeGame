@@ -4,10 +4,11 @@
 
 #include <assert.h>
 
-Board::Board(Graphics& gfx)
+Board::Board(Graphics& gfx, std::mt19937& rng)
 	: _gfx(gfx)
 {
 	CenterBoard();
+	spawnPoison(rng);
 }
 
 void Board::drawCell(const Location& loc, Color col)
@@ -37,7 +38,7 @@ void Board::DrawBorder(Color color)
 	}
 }
 
-void Board::DrawContents(Color goalColor, Color obsticleColor)
+void Board::DrawContents(Color goalColor, Color obsticleColor, Color poisonColor)
 {
 	for (size_t i = 0; i < _width * _height; i++)
 	{
@@ -51,6 +52,10 @@ void Board::DrawContents(Color goalColor, Color obsticleColor)
 		else if (_contents[i] == CellContents::Goal)
 		{
 			drawCell(Location(x, y), goalColor);
+		}
+		else if (_contents[i] == CellContents::Poison)
+		{
+			drawCell(Location(x, y), poisonColor);
 		}
 
 	}
@@ -66,7 +71,8 @@ void Board::spawnObstacle(std::mt19937& rng, const Snake& snake, const Goal& goa
 	{
 		newLoc._x = xDist(rng);
 		newLoc._y = yDist(rng);
-	} while (snake.IsInTile(newLoc) || checkForObstacle(newLoc) || newLoc == goal.getLocation());
+	} while (snake.IsInTile(newLoc) || checkForContent(newLoc, CellContents::Obsticle) || 
+		checkForContent(newLoc, CellContents::Poison) || newLoc == goal.getLocation());
 
 	_contents[newLoc._y * _width + newLoc._x] = CellContents::Obsticle;
 }
@@ -78,9 +84,9 @@ bool Board::isInsideBoard(const Location& loc) const
 	return inBoard;
 }
 
-bool Board::checkForObstacle(const Location& loc) const
+bool Board::checkForContent(const Location& loc, CellContents content) const
 {
-	return _contents[loc._y * _width + loc._x] == CellContents::Obsticle;
+	return _contents[loc._y * _width + loc._x] == content;
 }
 
 void Board::CenterBoard()
@@ -93,4 +99,18 @@ void Board::CenterBoard()
 
 	_boardXOffset = _xOffset / _dimention;
 	_boardYOffset = _yOffset / _dimention;
+}
+
+void Board::spawnPoison(std::mt19937& rng)
+{
+	std::uniform_int_distribution<int> poisonDist(1, 4);
+	for (size_t i = 0; i < _width * _height; i++)
+	{
+		int chance = poisonDist(rng);
+		if (chance == 1)
+		{
+			_contents[i] = CellContents::Poison;
+		}
+	}
+
 }

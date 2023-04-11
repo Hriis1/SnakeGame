@@ -49,13 +49,13 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	std::mt19937 _rng;
 	Board _board;
 	Snake _snek;
 	Location _delta_loc = {1,0};
-	std::mt19937 _rng;
 	Goal _goal;
-	static constexpr int _snekMovePeriod = 30;
-	int _snekMoveCounter = 0;
+	float _snekMovePeriod = 30;
+	float _snekMoveCounter = 0;
 
 	bool _gameOver = false;
 

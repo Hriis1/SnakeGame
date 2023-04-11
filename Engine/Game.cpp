@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	_board(gfx), _rng(std::random_device()()), _snek({10,10}), _goal(_rng, _board, _snek)
+	_rng(std::random_device()()), _board(gfx, _rng), _snek({10,10}), _goal(_rng, _board, _snek)
 {
 }
 
@@ -62,8 +62,13 @@ void Game::UpdateModel()
 		{
 			_snekMoveCounter = 0;
 			Location next = _snek.GetNextHeadPos(_delta_loc);
-			if (_board.isInsideBoard(next) && !_snek.IsInTileExeptEnd(next) && !_board.checkForObstacle(next))
+			if (_board.isInsideBoard(next) && !_snek.IsInTileExeptEnd(next) && !_board.checkForContent(next, CellContents::Obsticle))
 			{
+				if (_board.checkForContent(next, CellContents::Poison))
+				{
+					_snekMovePeriod -= 0.25f;
+				}
+
 				bool eating = next == _goal.getLocation();
 				if (eating)
 				{
@@ -89,7 +94,7 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	_board.DrawBorder(Color(3, 105, 103));
-	_board.DrawContents(Colors::Red, Colors::Gray);
+	_board.DrawContents(Colors::Red, Colors::Gray, Color(94, 2, 122));
 	_snek.Draw(_board);
 
 	if (_gameOver)
