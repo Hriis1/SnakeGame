@@ -88,10 +88,9 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	_board.DrawBorder(Color(87, 9, 70));
-	_board.DrawObstacles(Colors::Gray);
+	_board.DrawBorder(Color(3, 105, 103));
+	_board.DrawContents(Colors::Red, Colors::Gray);
 	_snek.Draw(_board);
-	_goal.Draw(_board);
 
 	if (_gameOver)
 	{

@@ -4,15 +4,20 @@
 #include "Graphics.h"
 #include "Location.h"
 
+enum class CellContents
+{
+	Empty, Goal, Obsticle, Poison
+};
 
 class Board
 {
+	friend class Goal;
 public:
 	Board(Graphics& gfx);
 
 	void drawCell(const Location& loc, Color col);
 	void DrawBorder(Color color);
-	void DrawObstacles(Color color);
+	void DrawContents(Color goalColor, Color obsticleColor);
 
 	void spawnObstacle(std::mt19937& rng, const class Snake& snake, const class Goal& goal);
 
@@ -37,7 +42,7 @@ private:
 	int _boardXOffset = 0;
 	int _boardYOffset = 0;
 
-	bool _hasObsticle[_width * _height] = { false };
+	CellContents _contents[_width * _height] = { CellContents::Empty };
 
 	Graphics& _gfx;
 };

@@ -37,17 +37,22 @@ void Board::DrawBorder(Color color)
 	}
 }
 
-void Board::DrawObstacles(Color color)
+void Board::DrawContents(Color goalColor, Color obsticleColor)
 {
 	for (size_t i = 0; i < _width * _height; i++)
 	{
-		if (_hasObsticle[i] == true)
+		int x = i % _width;
+		int y = i / _width;
+		if (_contents[i] == CellContents::Obsticle)
 		{
-			int x = i % _width;
-			int y = i / _width;
 			Location obstacleLoc(x,y);
-			drawCell(obstacleLoc, color);
+			drawCell(obstacleLoc, obsticleColor);
 		}
+		else if (_contents[i] == CellContents::Goal)
+		{
+			drawCell(Location(x, y), goalColor);
+		}
+
 	}
 }
 
@@ -63,7 +68,7 @@ void Board::spawnObstacle(std::mt19937& rng, const Snake& snake, const Goal& goa
 		newLoc._y = yDist(rng);
 	} while (snake.IsInTile(newLoc) || checkForObstacle(newLoc) || newLoc == goal.getLocation());
 
-	_hasObsticle[newLoc._y * _width + newLoc._x] = true;
+	_contents[newLoc._y * _width + newLoc._x] = CellContents::Obsticle;
 }
 
 bool Board::isInsideBoard(const Location& loc) const
@@ -75,7 +80,7 @@ bool Board::isInsideBoard(const Location& loc) const
 
 bool Board::checkForObstacle(const Location& loc) const
 {
-	return _hasObsticle[loc._y * _width + loc._x];
+	return _contents[loc._y * _width + loc._x] == CellContents::Obsticle;
 }
 
 void Board::CenterBoard()

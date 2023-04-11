@@ -7,11 +7,10 @@
 class Goal
 {
 public:
-	Goal(std::mt19937& rng, const Board& board, const Snake& snake);
+	Goal(std::mt19937& rng, Board& board, const Snake& snake);
 	~Goal();
 
-	void Respawn(std::mt19937& rng, const Board& board, const Snake& snake);
-	void Draw(Board& board) const;
+	void Respawn(std::mt19937& rng, Board& board, const Snake& snake);
 
 	//getters
 	const Location& getLocation() const { return _loc; }

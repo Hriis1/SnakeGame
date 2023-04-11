@@ -1,6 +1,6 @@
 #include "Goal.h"
 
-Goal::Goal(std::mt19937& rng, const Board& board, const Snake& snake)
+Goal::Goal(std::mt19937& rng, Board& board, const Snake& snake)
 {
 	Respawn(rng, board, snake);
 }
@@ -9,11 +9,12 @@ Goal::~Goal()
 {
 }
 
-void Goal::Respawn(std::mt19937& rng, const Board& board, const Snake& snake)
+void Goal::Respawn(std::mt19937& rng, Board& board, const Snake& snake)
 {
 	std::uniform_int_distribution<int> xDist(0, board.getWidth() - 1);
 	std::uniform_int_distribution<int> yDist(0, board.getHeight() - 1);
 
+	board._contents[_loc._y * board._width + _loc._x] = CellContents::Empty;
 	Location newLoc;
 	do
 	{
@@ -22,10 +23,6 @@ void Goal::Respawn(std::mt19937& rng, const Board& board, const Snake& snake)
 	} while (snake.IsInTile(newLoc) || board.checkForObstacle(newLoc));
 
 	_loc = newLoc;
+	board._contents[_loc._y * board._width + _loc._x] = CellContents::Goal;
 
-}
-
-void Goal::Draw(Board& board) const
-{
-	board.drawCell(_loc, _col);
 }
